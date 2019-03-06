@@ -19,6 +19,8 @@ You’d think tracking steps with some degree of accuracy would be rather difficul
 
 Start by initialising a SensorManager and a Sensor.
 
+------------------------------------------------CODE--------------------------------------------------------------------
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -57,6 +59,9 @@ private long steps = 0;
             steps++;
         }
     }
+
+-------------------------------------------------CODE------------------------------------------------------------------
+
 All I am doing is simply incrementing a variable every time a step is detected. This can then be used however you please, for example updating the text within a TextView in real time and displaying it to the user.
 
 Measuring Distance
@@ -68,11 +73,16 @@ For this example I’m going to use 78cm as the step length, as I am male.
 
 So if we take the number of steps, multiply them by 78 and then divide by 100000 we should arrive at a distance in kilometers. For example, the other day I went for a leisurely run of 6.6 kilometers. According to Google fit I did this in 8,504 steps?—?so (8,504 * 78) / 100000 = 6.633 which is pretty damn close!
 
+--------------------------------------------------CODE--------------------------------------------------------------------
+
 //function to determine the distance run in kilometers using average step length for men and number of steps
 public float getDistanceRun(long steps){
     float distance = (float)(steps*78)/(float)100000;
     return distance;
 }
+
+---------------------------------------------------CODE-----------------------------------------------------------------------
+
 Wrap up
 Hopefully you found this useful. This was something that was really fun for me to play with and try to figure out.
 
