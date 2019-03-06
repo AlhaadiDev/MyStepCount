@@ -21,32 +21,30 @@ Start by initialising a SensorManager and a Sensor.
 
 ------------------------------------------------CODE--------------------------------------------------------------------
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.app.Activity;
-public class StepActivity extends Activity implements SensorEventListener{
-	SensorManager sManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-	Sensor stepSensor = sManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-	...
-}
-The Sensor is initialised as a TYPE_STEP_DETECTOR meaning it will be set up to notice when a step has been taken. The manager will be used to register the sensor as a listener to the activity and deregister it when the activity stops. We can do this by overriding the Activities onResume() and onStop() functions.
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
 
-@Override
-    protected void onResume() {
-        super.onResume();
-        sManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
-    }
+public class StepActivity extends AppCompatActivity implements SensorEventListener {
+    private long steps = 0;
+    SensorManager sManager;
+    Sensor stepSensor;
+
     @Override
-    protected void onStop() {
-        super.onStop();
-        sManager.unregisterListener(this, stepSensor);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        sManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        stepSensor = sManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        ((TextView)findViewById(R.id.txt_hello)).setText(String.valueOf(getDistanceRun(steps)));
     }
-Now we have initialised the SensorManager and Sensor and have the Sensor registered as a listener within the activity, we now need to implement the onSensorChanged function that will be triggered by a SensorEvent whenever there is a change to the Sensor we registered, in our case the TYPE_STEP_DETECTOR.
 
-private long steps = 0;
-	@Override
+    @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor sensor = event.sensor;
         float[] values = event.values;
@@ -59,6 +57,30 @@ private long steps = 0;
             steps++;
         }
     }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sManager.registerListener(this,stepSensor,SensorManager.SENSOR_DELAY_FASTEST);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sManager.unregisterListener(this,stepSensor);
+    }
+
+    //function to determine the distance run in kilometers using average step length for men and number of steps
+    public float getDistanceRun(long steps){
+        float distance = (float)(steps*78)/(float)100000;
+        return distance;
+    }
+}
 
 -------------------------------------------------CODE------------------------------------------------------------------
 
@@ -75,11 +97,11 @@ So if we take the number of steps, multiply them by 78 and then divide by 100000
 
 --------------------------------------------------CODE--------------------------------------------------------------------
 
-//function to determine the distance run in kilometers using average step length for men and number of steps
-public float getDistanceRun(long steps){
-    float distance = (float)(steps*78)/(float)100000;
-    return distance;
-}
+  //function to determine the distance run in kilometers using average step length for men and number of steps
+    public float getDistanceRun(long steps){
+        float distance = (float)(steps*78)/(float)100000;
+        return distance;
+    }
 
 ---------------------------------------------------CODE-----------------------------------------------------------------------
 
